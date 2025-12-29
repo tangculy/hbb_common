@@ -126,19 +126,19 @@ lazy_static::lazy_static! {
     pub static ref DEFAULT_LOCAL_SETTINGS: RwLock<HashMap<String, String>> = {
         let mut map = HashMap::new();
         //主题色，dark：深色，light：浅色，system：跟随系统
-        map.insert("theme".to_string(), "dark".to_string());
+        map.insert("theme".to_string(), "light".to_string());
         //使用D3D渲染
         map.insert("allow-d3d-render".to_string(), "Y".to_string());
         //启动时检查软件更新
-        map.insert("enable-check-update".to_string(), "N".to_string());
+        map.insert("enable-check-update".to_string(), "Y".to_string());
         //自动更新
-        map.insert("allow-auto-update".to_string(), "N".to_string());
+        map.insert("allow-auto-update".to_string(), "Y".to_string());
         //启用UDP打洞
         map.insert("enable-udp-punch".to_string(), "Y".to_string());
         //启用IPv6 P2P连接
         map.insert("enable-ipv6-punch".to_string(), "Y".to_string());
         //禁用发现选项卡
-        map.insert("disable-discovery-panel".to_string(), "Y".to_string());
+        map.insert("disable-discovery-panel".to_string(), "N".to_string());
         //默认提权运行
         map.insert("pre-elevate-service".to_string(), "Y".to_string());
         RwLock::new(map)
@@ -549,6 +549,11 @@ impl Config2 {
     fn load() -> Config2 {
         let mut config = Config::load_::<Config2>("2");
         let mut store = false;
+		//允许 IP 直连 默认打勾
+		if !config.options.contains_key("direct-server") {
+            config.options.insert("direct-server".to_string(), "Y".to_string());
+            store = true;
+        }
         if let Some(mut socks) = config.socks {
             let (password, _, store2) =
                 decrypt_str_or_original(&socks.password, PASSWORD_ENC_VERSION);
